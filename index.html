@@ -1,304 +1,483 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f9f9f9;
-    }
-    
-    .mind-map {
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-    
-    .center-node {
-      background-color: #3498db;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 50px;
-      font-weight: bold;
-      text-align: center;
-      position: relative;
-      cursor: pointer;
-      z-index: 2;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    .branches {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 50px;
-    }
-    
-    .branch {
-      width: 30%;
-      min-width: 250px;
-      margin: 0 10px 30px;
-    }
-    
-    .branch-title {
-      background-color: #2ecc71;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 30px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 15px;
-      position: relative;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    .sub-branch {
-      background-color: #f1c40f;
-      color: #333;
-      padding: 8px 12px;
-      border-radius: 20px;
-      margin: 10px 0;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .explanation-box {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80%;
-      max-width: 600px;
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      z-index: 10;
-    }
-    
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #333;
-    }
-    
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 5;
-    }
-    
-    h3 {
-      margin-top: 0;
-      color: #2c3e50;
-      border-bottom: 2px solid #ecf0f1;
-      padding-bottom: 10px;
-    }
-    
-    .info-content {
-      line-height: 1.6;
-    }
-    
-    .highlight {
-      font-weight: bold;
-      color: #e74c3c;
-    }
-  </style>
-</head>
+    <title>Linear and Additive Models Mind Map</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .mind-map {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 20px;
+            overflow: auto;
+        }
+        
+        .node {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .node:hover {
+            filter: brightness(0.9);
+        }
+        
+        .node-content {
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin: 5px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            min-width: 120px;
+            font-weight: bold;
+            user-select: none;
+        }
+        
+        .root {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .level-1 {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .level-2 {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .level-3 {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .children {
+            display: flex;
+            flex-direction: column;
+            margin-left: 20px;
+        }
+        
+        .branch {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .info-box {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: none;
+        }
+        
+        .info-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .info-content {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .info-relations {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .close-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #999;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 99;
+            display: none;
+        }
+        
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        
+        .highlight {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+<script defer="" data-domain="sk-mlwk3-mindmap.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script><script defer="" data-domain="sk-mlwk3-mindmap.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
 <body>
-  <div class="mind-map">
-    <div>
-      <div class="center-node" onclick="showExplanation('statistical-inference')">Statistical Inference</div>
-      
-      <div class="branches">
-        <div class="branch">
-          <div class="branch-title" onclick="showExplanation('bayesianism')">Bayesianism</div>
-          <div class="sub-branch" onclick="showExplanation('bayes-theorem')">Bayes' Theorem</div>
-          <div class="sub-branch" onclick="showExplanation('prior-likelihood-posterior')">Prior, Likelihood, Posterior</div>
-          <div class="sub-branch" onclick="showExplanation('base-rate-fallacy')">Base Rate Fallacy</div>
+    <div class="container">
+        <h1>Linear and Additive Models Mind Map</h1>
+        <p>Click on any concept to learn more about it and its relationships.</p>
+        
+        <div class="mind-map">
+            <div class="node">
+                <div class="node-content root" onclick="showInfo('linear-additive-models')">
+                    Linear &amp; Additive Models
+                </div>
+                <div class="children">
+                    <div class="branch">
+                        <div class="node">
+                            <div class="node-content level-1" onclick="showInfo('linear-models')">
+                                Linear Models
+                            </div>
+                            <div class="children">
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('linear-regression')">
+                                            Linear Regression
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('logistic-regression')">
+                                            Logistic Regression
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('glm')">
+                                            Generalized Linear Models
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="branch">
+                        <div class="node">
+                            <div class="node-content level-1" onclick="showInfo('regularization')">
+                                Regularization
+                            </div>
+                            <div class="children">
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('ridge-regression')">
+                                            Ridge Regression
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('lasso-regression')">
+                                            Lasso Regression
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('elastic-net')">
+                                            Elastic Net
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('bias-variance')">
+                                            Bias-Variance Tradeoff
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="branch">
+                        <div class="node">
+                            <div class="node-content level-1" onclick="showInfo('additive-models')">
+                                Additive Models
+                            </div>
+                            <div class="children">
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('gam')">
+                                            Generalized Additive Models
+                                        </div>
+                                        <div class="children">
+                                            <div class="branch">
+                                                <div class="node">
+                                                    <div class="node-content level-3" onclick="showInfo('basis-functions')">
+                                                        Basis Functions
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('splines')">
+                                            Splines
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="node">
+                                        <div class="node-content level-2" onclick="showInfo('kernel-smoothers')">
+                                            Kernel Smoothers
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div class="branch">
-          <div class="branch-title" onclick="showExplanation('frequentism')">Frequentism</div>
-          <div class="sub-branch" onclick="showExplanation('hypothesis-testing')">Hypothesis Testing</div>
-          <div class="sub-branch" onclick="showExplanation('type-errors')">Type I &amp; Type II Errors</div>
-          <div class="sub-branch" onclick="showExplanation('p-values')">P-values</div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #3498db;"></div>
+                <span>Main Concept</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #e74c3c;"></div>
+                <span>Major Categories</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2ecc71;"></div>
+                <span>Key Methods</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #f39c12;"></div>
+                <span>Components</span>
+            </div>
         </div>
-        
-        <div class="branch">
-          <div class="branch-title" onclick="showExplanation('integration-ml')">Integration in ML</div>
-          <div class="sub-branch" onclick="showExplanation('empirical-bayes')">Empirical Bayes</div>
-          <div class="sub-branch" onclick="showExplanation('pac-bayes')">PAC-Bayes Theory</div>
-          <div class="sub-branch" onclick="showExplanation('two-cultures')">Two Cultures</div>
-        </div>
-      </div>
     </div>
-  </div>
-  
-  <div class="overlay" id="overlay" onclick="hideExplanation()"></div>
-  
-  <div class="explanation-box" id="explanation-box">
-    <button class="close-btn" onclick="hideExplanation()">×</button>
-    <h3 id="explanation-title">Title</h3>
-    <div class="info-content" id="explanation-content">Content goes here</div>
-  </div>
-  
-  <script>
-    const explanations = {
-      'statistical-inference': {
-        title: 'Statistical Inference',
-        content: `<ul>
-          <li><span class="highlight">Statistical inference</span> provides frameworks for reasoning under uncertainty - making decisions with <span class="highlight">incomplete or imperfect information</span>.</li>
-          <li>Unlike <span class="highlight">deductive logic</span> which provides certainty, <span class="highlight">statistical inference</span> deals with probabilistic reasoning essential for real-world problems like <span class="highlight">medical diagnoses</span>, <span class="highlight">weather predictions</span>, and <span class="highlight">machine learning</span>.</li>
-          <li>The two main approaches are <span class="highlight">Bayesianism</span> (belief updating) and <span class="highlight">frequentism</span> (error minimization).</li>
-        </ul>`
-      },
-      'bayesianism': {
-        title: 'Bayesianism',
-        content: `<ul>
-          <li><span class="highlight">Bayesianism</span>, developed primarily by <span class="highlight">Pierre-Simon Laplace</span> (though named after <span class="highlight">Thomas Bayes</span>), is a formal approach to modeling rational belief.</li>
-          <li>It provides a <span class="highlight">mathematical framework</span> for updating beliefs in light of <span class="highlight">new evidence</span>.</li>
-          <li>In <span class="highlight">machine learning</span>, Bayesian methods are used for <span class="highlight">parameter estimation</span>, <span class="highlight">model selection</span>, and quantifying <span class="highlight">uncertainty</span>.</li>
-          <li>The approach is characterized by its use of <span class="highlight">prior probabilities</span> and <span class="highlight">likelihoods</span> to derive <span class="highlight">posterior probabilities</span>.</li>
-        </ul>`
-      },
-      'bayes-theorem': {
-        title: "Bayes' Theorem",
-        content: `<ul>
-          <li><span class="highlight">Bayes' Theorem</span> is the mathematical foundation of Bayesian inference, given by: <span class="highlight">P(h|e) = [P(e|h) × P(h)] / P(e)</span>, where <span class="highlight">h</span> is a hypothesis and <span class="highlight">e</span> is evidence.</li>
-          <li>In words: <span class="highlight">Posterior ∝ Likelihood × Prior</span>.</li>
-          <li>This formula shows how to optimally combine <span class="highlight">background knowledge (prior)</span> with <span class="highlight">new evidence (through the likelihood)</span> to update our <span class="highlight">beliefs (posterior)</span>.</li>
-          <li>This theorem is fundamental in <span class="highlight">machine learning</span> for tasks like <span class="highlight">classification</span> and <span class="highlight">parameter estimation</span>.</li>
-        </ul>`
-      },
-      'prior-likelihood-posterior': {
-        title: 'Prior, Likelihood, Posterior',
-        content: `<ul>
-          <li>The three key components of <span class="highlight">Bayesian inference</span> are:</li>
-          <ul>
-            <li><span class="highlight">Prior P(h)</span>: Initial probability assigned to hypothesis h before considering evidence.</li>
-            <li><span class="highlight">Likelihood P(e|h)</span>: Probability of observing evidence e if hypothesis h is true.</li>
-            <li><span class="highlight">Posterior P(h|e)</span>: Updated probability of hypothesis h after observing evidence e.</li>
-            <li><span class="highlight">Marginal Likelihood P(e)</span>: Total probability of evidence across all hypotheses, acts as a normalizing constant.</li>
-          </ul>
-          <li>In <span class="highlight">machine learning</span>, these concepts map to <span class="highlight">initial model assumptions</span>, how well data fits the model, and <span class="highlight">updated model beliefs</span>.</li>
-        </ul>`
-      },
-      'base-rate-fallacy': {
-        title: 'Base Rate Fallacy',
-        content: `<ul>
-          <li>The <span class="highlight">base rate fallacy</span> occurs when people ignore the <span class="highlight">prior probability (base rate)</span> when making judgments.</li>
-          <li>The rare disease example demonstrates this: A disease with <span class="highlight">0.1% prevalence</span> and a <span class="highlight">99% accurate test</span> yields only about <span class="highlight">9% probability</span> of having the disease after testing positive, not 99% as many intuitively guess.</li>
-          <li>This demonstrates how ignoring priors leads to drastically incorrect probability assessments—a crucial insight for <span class="highlight">medical diagnoses</span>, <span class="highlight">anomaly detection</span>, and other <span class="highlight">ML applications</span>.</li>
-        </ul>`
-      },
-      'frequentism': {
-        title: 'Frequentism',
-        content: `<ul>
-          <li><span class="highlight">Frequentism</span> interprets probabilities as limiting frequencies in repeated experiments, not as degrees of belief.</li>
-          <li>Developed by statisticians like <span class="highlight">Neyman</span> and <span class="highlight">Pearson</span>, this approach focuses on controlling long-run error rates in hypothesis testing.</li>
-          <li>Frequentist methods are widespread in scientific research and <span class="highlight">machine learning evaluation</span>, where the goal is to establish <span class="highlight">statistical significance</span> or control <span class="highlight">false discovery rates</span>.</li>
-        </ul>`
-      },
-      'hypothesis-testing': {
-        title: 'Hypothesis Testing',
-        content: `<ul>
-          <li><span class="highlight">Null Hypothesis Significance Testing (NHST)</span> involves testing a <span class="highlight">null hypothesis (H₀)</span> against an <span class="highlight">alternative hypothesis (H₁)</span>.</li>
-          <li>The process involves:</li>
-          <ul>
-            <li>Setting up <span class="highlight">null and alternative hypotheses</span></li>
-            <li>Choosing a <span class="highlight">test statistic</span> and <span class="highlight">significance level (α)</span></li>
-            <li>Computing the <span class="highlight">test statistic</span> from data</li>
-            <li>Determining if the result falls in the <span class="highlight">rejection region</span></li>
-          </ul>
-          <li>The goal is to minimize <span class="highlight">Type II error (false negatives)</span> while controlling <span class="highlight">Type I error (false positives)</span>.</li>
-          <li>This framework underlies many evaluation methodologies in <span class="highlight">machine learning</span>, including <span class="highlight">A/B testing</span> and <span class="highlight">model comparison</span>.</li>
-        </ul>`
-      },
-      'type-errors': {
-        title: 'Type I & Type II Errors',
-        content: `<ul>
-          <li>In hypothesis testing, two types of errors can occur:</li>
-          <ul>
-            <li><span class="highlight">Type I Error (False Positive)</span>: Incorrectly rejecting a true null hypothesis (finding an effect when none exists).</li>
-            <li><span class="highlight">Type II Error (False Negative)</span>: Failing to reject a false null hypothesis (missing a real effect).</li>
-          </ul>
-          <li>The rate of <span class="highlight">Type I errors</span> is controlled by setting <span class="highlight">α (typically 0.05)</span>, while minimizing <span class="highlight">Type II errors</span> (increasing power) is achieved through larger sample sizes or more sensitive tests.</li>
-          <li>This trade-off is analogous to <span class="highlight">precision vs. recall</span> in <span class="highlight">machine learning classification tasks</span>.</li>
-        </ul>`
-      },
-      'p-values': {
-        title: 'P-values',
-        content: `<ul>
-          <li>A <span class="highlight">p-value</span> represents the probability of observing data at least as extreme as what was actually observed, assuming the <span class="highlight">null hypothesis</span> is true.</li>
-          <li>In the biased coin example, getting 21 heads in 30 flips yields a <span class="highlight">p-value of approximately 0.043</span>, indicating the result is statistically significant at <span class="highlight">α = 0.05</span>.</li>
-          <li><span class="highlight">P-values</span> are widely used but often misinterpreted – they don't represent the probability that the <span class="highlight">null hypothesis</span> is true, but rather the probability of observing such extreme data if the null were true.</li>
-          <li>In <span class="highlight">ML</span>, p-values often appear in <span class="highlight">model evaluation</span> and <span class="highlight">hypothesis testing</span> about model performance.</li>
-        </ul>`
-      },
-      'integration-ml': {
-        title: 'Integration in Machine Learning',
-        content: `<ul>
-          <li>Modern <span class="highlight">machine learning</span> increasingly bridges <span class="highlight">Bayesian</span> and <span class="highlight">frequentist</span> approaches.</li>
-          <li>Many classical inference problems can be reframed as <span class="highlight">prediction tasks</span>.</li>
-          <li>Contemporary approaches include <span class="highlight">prediction-powered inference</span>, <span class="highlight">simulation-based inference</span>, and <span class="highlight">test martingales</span> that combine frequentist optimality with Bayesian factors.</li>
-          <li><span class="highlight">ML</span> tends to focus more on <span class="highlight">predictive performance</span> (the algorithmic modeling culture) while still incorporating statistical principles from both traditions.</li>
-        </ul>`
-      },
-      'empirical-bayes': {
-        title: 'Empirical Bayes',
-        content: `<ul>
-          <li><span class="highlight">Empirical Bayes methods</span> provide a compromise between <span class="highlight">Bayesian</span> and <span class="highlight">frequentist approaches</span> by using the data itself to estimate <span class="highlight">prior distributions</span> rather than specifying them in advance.</li>
-          <li>This approach allows for <span class="highlight">"data-driven priors"</span> and addresses one of the main criticisms of Bayesian methods (<span class="highlight">subjective priors</span>) while maintaining the benefits of Bayesian inference.</li>
-          <li>In <span class="highlight">machine learning</span>, empirical Bayes is used for tasks like <span class="highlight">multi-task learning</span>, <span class="highlight">transfer learning</span>, and <span class="highlight">regularization</span>.</li>
-        </ul>`
-      },
-      'pac-bayes': {
-        title: 'PAC-Bayes Theory',
-        content: `<ul>
-          <li><span class="highlight">PAC-Bayes</span> (Probably Approximately Correct-Bayes) learning theory combines <span class="highlight">PAC learning</span> (a frequentist framework with performance guarantees) with Bayesian inference.</li>
-          <li>It provides theoretical bounds on the <span class="highlight">generalization error</span> of learning algorithms by taking a <span class="highlight">prior distribution</span> over hypotheses and updating it to a <span class="highlight">posterior</span> based on training data.</li>
-          <li>This framework is particularly valuable in <span class="highlight">ML</span> for understanding <span class="highlight">generalization capabilities</span> and <span class="highlight">over-fitting</span>, offering theoretical guarantees with practical Bayesian methods.</li>
-        </ul>`
-      },
-      'two-cultures': {
-        title: 'Two Cultures',
-        content: `<ul>
-          <li><span class="highlight">Leo Breiman</span> described "two cultures" in statistical modeling:</li>
-          <ul>
-            <li>1. <span class="highlight">Data modeling culture</span>: Assumes data is generated by a given stochastic model (traditional statistics).</li>
-            <li>2. <span class="highlight">Algorithmic modeling culture</span>: Treats the data mechanism as unknown and focuses on <span class="highlight">predictive accuracy</span> (<span class="highlight">machine learning</span>).</li>
-          </ul>
-          <li>Modern <span class="highlight">ML</span> increasingly bridges these approaches, using algorithmic techniques while incorporating statistical inference principles. The integration of these cultures provides both <span class="highlight">predictive power</span> and <span class="highlight">interpretability</span>—crucial for deploying ML in high-stakes domains.</li>
-        </ul>`
-      }
-    };
-
-    function showExplanation(concept) {
-      document.getElementById('explanation-title').textContent = explanations[concept].title;
-      document.getElementById('explanation-content').innerHTML = explanations[concept].content;
-      document.getElementById('explanation-box').style.display = 'block';
-      document.getElementById('overlay').style.display = 'block';
-    }
     
-    function hideExplanation() {
-      document.getElementById('explanation-box').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-    }
-  </script>
+    <div class="overlay" id="overlay" onclick="hideInfo()"></div>
+    
+    <div class="info-box" id="info-box">
+        <div class="close-btn" onclick="hideInfo()">×</div>
+        <div class="info-title" id="info-title">Concept Title</div>
+        <div class="info-content" id="info-content">Concept explanation goes here.</div>
+        <div class="info-relations" id="info-relations">
+            <div id="parent-relation"></div>
+            <div id="child-relation"></div>
+        </div>
+    </div>
+    
+    <script>
+        const conceptInfo = {
+            'linear-additive-models': {
+                title: 'Linear &amp; Additive Models',
+                content: `<ul>
+  <li>These models form the <span class="highlight">foundation</span> of many <span class="highlight">machine learning techniques</span>.</li>
+  <li>They combine <span class="highlight">interpretability</span> with <span class="highlight">predictive power</span> by modeling relationships as functions of <span class="highlight">input features</span>.</li>
+  <li>Most sophisticated <span class="highlight">ML algorithms</span> can be understood as <span class="highlight">variants</span> of these models.</li>
+</ul>`
+            },
+            'linear-models': {
+                title: 'Linear Models',
+                content: `<ul>
+  <li><span class="highlight">Linear models</span> predict outputs as weighted sums of <span class="highlight">input features</span>.</li>
+  <li>They are <span class="highlight">simple</span>, <span class="highlight">interpretable</span>, and serve as <span class="highlight">building blocks</span> for more <span class="highlight">complex approaches</span>.</li>
+  <li>These models excel when relationships between variables are <span class="highlight">approximately linear</span>.</li>
+</ul>`
+            },
+            'linear-regression': {
+                title: 'Linear Regression',
+                content: `<ul>
+  <li>Predicts <span class="highlight">continuous outcomes</span> as a <span class="highlight">linear combination</span> of <span class="highlight">input features</span>.</li>
+  <li>The <span class="highlight">Ordinary Least Squares (OLS)</span> solution minimizes the sum of <span class="highlight">squared errors</span> between predictions and actual values.</li>
+  <li>Under certain assumptions, OLS is the <span class="highlight">Best Linear Unbiased Estimator (BLUE)</span> according to the <span class="highlight">Gauss-Markov theorem</span>.</li>
+</ul>`
+            },
+            'logistic-regression': {
+                title: 'Logistic Regression',
+                content: `<ul>
+  <li>Models the probability of <span class="highlight">binary outcomes</span> using a <span class="highlight">logistic function</span> applied to a <span class="highlight">linear combination</span> of features.</li>
+  <li>Transforms <span class="highlight">linear predictions</span> to <span class="highlight">probabilities</span> in the range [0,1].</li>
+  <li>The model is linear in the <span class="highlight">log-odds (logit)</span> space.</li>
+</ul>`
+            },
+            'glm': {
+                title: 'Generalized Linear Models',
+                content: `<ul>
+  <li>Extends <span class="highlight">linear regression</span> to <span class="highlight">response variables</span> with <span class="highlight">non-normal distributions</span>.</li>
+  <li>Contains three components: a <span class="highlight">response distribution</span> from the <span class="highlight">exponential family</span>, <span class="highlight">linear weights</span> on features, and a <span class="highlight">link function</span> connecting the <span class="highlight">linear predictor</span> to the <span class="highlight">response variable</span>.</li>
+</ul>`
+            },
+            'regularization': {
+                title: 'Regularization',
+                content: `<ul>
+  <li>Techniques to prevent <span class="highlight">overfitting</span> by adding <span class="highlight">constraints</span> on <span class="highlight">model parameters</span>.</li>
+  <li>Adds <span class="highlight">penalty terms</span> to the <span class="highlight">loss function</span>, shrinking coefficients toward zero.</li>
+  <li>Creates a <span class="highlight">bias-variance tradeoff</span> – increasing bias slightly while reducing variance substantially.</li>
+</ul>`
+            },
+            'ridge-regression': {
+                title: 'Ridge Regression (L2)',
+                content: `<ul>
+  <li>Adds a penalty on the <span class="highlight">squared L2 norm</span> of coefficients.</li>
+  <li>This shrinks all coefficients toward <span class="highlight">zero</span> but typically doesn't eliminate any completely.</li>
+  <li>Works well when many features contribute a <span class="highlight">small amount</span> to the prediction.</li>
+  <li>Has a <span class="highlight">Bayesian interpretation</span> as <span class="highlight">maximum a posteriori estimation</span> with <span class="highlight">Gaussian priors</span>.</li>
+</ul>`
+            },
+            'lasso-regression': {
+                title: 'Lasso Regression (L1)',
+                content: `<ul>
+  <li>Adds a penalty on the <span class="highlight">L1 norm</span> of coefficients.</li>
+  <li>Creates <span class="highlight">sparse models</span> by forcing some coefficients to exactly <span class="highlight">zero</span>, performing <span class="highlight">feature selection</span> implicitly.</li>
+  <li>Works well when a <span class="highlight">small subset</span> of features strongly influence the outcome.</li>
+</ul>`
+            },
+            'elastic-net': {
+                title: 'Elastic Net',
+                content: `<ul>
+  <li>Combines <span class="highlight">L1</span> and <span class="highlight">L2 penalties</span> to get the best of both worlds.</li>
+  <li>Balances the <span class="highlight">feature selection</span> properties of Lasso with the <span class="highlight">coefficient shrinkage</span> of Ridge regression.</li>
+  <li>Particularly useful for <span class="highlight">correlated predictors</span> where Lasso might select only one from a group of correlated features.</li>
+</ul>`
+            },
+            'bias-variance': {
+                title: 'Bias-Variance Tradeoff',
+                content: `<ul>
+  <li>The <span class="highlight">prediction error</span> can be decomposed into <span class="highlight">bias</span> (systematic error) and <span class="highlight">variance</span> (sensitivity to training data fluctuations).</li>
+  <li><span class="highlight">Complex models</span> have high variance but low bias; <span class="highlight">simple models</span> have low variance but high bias.</li>
+  <li>Finding the right <span class="highlight">model complexity</span> is key to minimizing total error.</li>
+</ul>`
+            },
+            'additive-models': {
+                title: 'Additive Models',
+                content: `<ul>
+  <li>Extends <span class="highlight">linear models</span> by allowing <span class="highlight">non-linear transformations</span> of features.</li>
+  <li>Prediction remains <span class="highlight">additive</span> (a sum of functions applied to individual features), preserving <span class="highlight">interpretability</span> while capturing <span class="highlight">non-linear effects</span>.</li>
+  <li>Allows <span class="highlight">visualization</span> of the relationship between each <span class="highlight">predictor</span> and the <span class="highlight">outcome</span>.</li>
+</ul>`
+            },
+            'gam': {
+                title: 'Generalized Additive Models',
+                content: `<ul>
+  <li><span class="highlight">GAMs</span> are <span class="highlight">GLMs</span> with <span class="highlight">basis expansions</span> of input features.</li>
+  <li>They model the response as a sum of <span class="highlight">smooth functions</span> of individual predictors.</li>
+  <li>This allows capturing <span class="highlight">non-linear effects</span> while maintaining <span class="highlight">interpretability</span>, as each feature's contribution can be visualized separately.</li>
+</ul>`
+            },
+            'basis-functions': {
+                title: 'Basis Functions',
+                content: `<ul>
+  <li>Transformations applied to <span class="highlight">input features</span> to capture <span class="highlight">non-linear patterns</span>.</li>
+  <li>Examples include <span class="highlight">polynomials</span>, <span class="highlight">interaction terms</span>, <span class="highlight">log transforms</span>, <span class="highlight">indicator functions</span>, and <span class="highlight">neural network activations</span>.</li>
+  <li>The right choice enables <span class="highlight">flexible modeling</span> while maintaining a <span class="highlight">linear structure</span> in the transformed space.</li>
+</ul>`
+            },
+            'splines': {
+                title: 'Splines',
+                content: `<ul>
+  <li><span class="highlight">Piecewise polynomials</span> that create <span class="highlight">smooth curves</span>.</li>
+  <li>Divide the <span class="highlight">input space</span> into regions with <span class="highlight">knots</span> and fit different polynomials in each region.</li>
+  <li><span class="highlight">Natural cubic splines</span> constrain the function to be linear in the tails.</li>
+  <li>Balance <span class="highlight">flexibility</span> with <span class="highlight">smoothness</span> through regularization of the <span class="highlight">second derivative</span>.</li>
+</ul>`
+            },
+            'kernel-smoothers': {
+                title: 'Kernel Smoothers',
+                content: `<ul>
+  <li>A <span class="highlight">non-parametric approach</span> that estimates a function at each point using a <span class="highlight">weighted average</span> of nearby training points.</li>
+  <li>The <span class="highlight">kernel function</span> determines how influence decays with <span class="highlight">distance</span>.</li>
+  <li>Examples include <span class="highlight">LOESS regression</span> and <span class="highlight">radial basis function kernels</span>.</li>
+  <li>These provide <span class="highlight">maximum flexibility</span> but may require more data.</li>
+</ul>`
+            }
+        };
+        
+        function showInfo(id) {
+            const info = conceptInfo[id];
+            document.getElementById('info-title').textContent = info.title;
+            document.getElementById('info-content').innerHTML = info.content;
+            
+            // Set up parent relationship
+            let parentHTML = '';
+            if (info.parent) {
+                parentHTML = `<strong>Parent:</strong> ${info.parent}`;
+            }
+            document.getElementById('parent-relation').innerHTML = parentHTML;
+            
+            // Set up children relationships
+            let childrenHTML = '';
+            if (info.children && info.children.length > 0) {
+                childrenHTML = `<strong>Related concepts:</strong> ${info.children.join(', ')}`;
+            }
+            document.getElementById('child-relation').innerHTML = childrenHTML;
+            
+            // Show the info box and overlay
+            document.getElementById('info-box').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+        
+        function hideInfo() {
+            document.getElementById('info-box').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+
 </body>
 </html>
